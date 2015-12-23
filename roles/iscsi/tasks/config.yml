@@ -1,0 +1,29 @@
+---
+- name: Copy iscsid.conf
+  template:
+    src: iscsid.conf.j2
+    dest: /etc/iscsi/iscsid.conf
+    backup: yes
+  notify:
+    - restart iscsi
+
+- name: Copy initiatorname.iscsi
+  template:
+    src: initiatorname.iscsi.j2
+    dest: /etc/iscsi/initiatorname.iscsi
+    backup: yes
+  notify:
+    - restart iscsi
+
+- name: Copy multipath.conf
+  template:
+    src: multipath.conf.j2
+    dest: /etc/multipath.conf
+  notify:
+    - restart multipath-tools
+
+
+- name: Enable multipathd
+  modprobe:
+    name: dm-multipath
+    state: present

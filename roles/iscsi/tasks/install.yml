@@ -1,0 +1,15 @@
+---
+- name: Install open-iscsi
+  apt:
+    name: "open-iscsi"
+    state: present
+
+- name: Install multipathd
+  apt:
+    name: "libdevmapper-dev"
+    state: present
+
+- name: Install multipath-tools
+  apt:
+    name: "multipath-tools"
+    state: "present"

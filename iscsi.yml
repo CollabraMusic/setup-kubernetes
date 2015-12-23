@@ -1,0 +1,5 @@
+---
+
+- hosts: kube-node
+  roles:
+    - { role: iscsi, tags: iscsi }

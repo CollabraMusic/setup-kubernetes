@@ -1,0 +1,7 @@
+---
+- name: restart iscsi
+  command: systemctl restart iscsi
+
+
+- name: restart multipath-tools
+  command: systemctl restart multipath-tools
