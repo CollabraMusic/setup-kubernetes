@@ -39,3 +39,21 @@
   shell: calicoctl node bgp peer add {{ item.router_id }} as {{ item.as }}
   with_items: peers
   when: peer_with_router|default(false) and inventory_hostname in groups['kube-node']
+
+- name: Calico | Install netfilter-persistent
+  apt:
+    name: netfilter-persistent
+    state: present
+
+- name: Calico | Install iptables-persistent
+  apt:
+    name: iptables-persistent
+    state: present
+
+- name: Calico | Copy iptables template rules over to /etc/iptables
+  template: src=calico/iptables.v4.j2 dest=/etc/iptables/rules.v4
+  notify: restart netfilter-persistent
+
+- name: Calico | Delete ipv6 rules
+  template: src=calico/iptables.v6.j2 dest=/etc/iptables/rules.v6
+  notify: restart netfilter-persistent

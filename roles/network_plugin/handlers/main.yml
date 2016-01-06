@@ -26,3 +26,6 @@
 
 - name : reload systemd
   shell: systemctl daemon-reload
+
+- name: restart netfilter-persistent
+  service: name=netfilter-persistent state=restarted

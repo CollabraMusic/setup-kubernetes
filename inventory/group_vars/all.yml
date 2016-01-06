@@ -84,3 +84,5 @@ dns_server: "{{ kube_service_addresses|ipaddr('net')|ipaddr(253)|ipaddr('address
 #    server master2 10.99.0.27:443
 #    balance roundrobin
 # apiserver_loadbalancer_domain_name: "lb-apiserver.kubernetes.local"
+
+
