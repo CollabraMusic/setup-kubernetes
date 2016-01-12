@@ -4,12 +4,12 @@ node.startup = automatic
 node.leading_login = No
 
 node.session.auth.authmethod = CHAP
-node.session.auth.username = {{iscsiUsername}}
-node.session.auth.password = {{iscsiPassword}}
+node.session.auth.username = {{iscsi_username}}
+node.session.auth.password = {{iscsi_password}}
 
 discovery.sendtargets.auth.authmethod = CHAP
-discovery.sendtargets.auth.username = {{iscsiUsername}}
-discovery.sendtargets.auth.password = {{iscsiPassword}}
+discovery.sendtargets.auth.username = {{iscsi_username}}
+discovery.sendtargets.auth.password = {{iscsi_password}}
 
 node.session.timeo.replacement_timeout = 120
 node.conn[0].timeo.login_timeout = 15

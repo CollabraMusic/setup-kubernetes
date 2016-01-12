@@ -29,5 +29,54 @@
   modprobe:
     name: dm-multipath
     state: present
-    
 
+- name: Discover iSCSI targets on portals
+  command: iscsiadm -m discovery -t sendtargets -p "{{item}}"
+  with_items: iscsi_portals
+  register: iscsi_register_discover_targets
+  when: (iscsi_portals|d(False) and (ansible_local|d() and ansible_local.iscsi|d() and
+         ansible_local.iscsi.discovered_portals is undefined or
+         (item not in ansible_local.iscsi.discovered_portals)))
+
+- name: Discover iSCSI targets on portals
+  open_iscsi:
+    discover: True
+    portal:   '{{ item }}'
+  with_items: iscsi_portals
+  register: iscsi_register_discover_targets
+  when: (iscsi_portals|d(False) and (ansible_local|d() and ansible_local.iscsi|d() and
+         ansible_local.iscsi.discovered_portals is undefined or
+         (item not in ansible_local.iscsi.discovered_portals)))
+
+- name: Log in to specified iSCSI targets
+  open_iscsi:
+    target:    '{{ item.target }}'
+    login:     '{{ False if (not item.login|d(True)) else True }}'
+    node_auth: '{{ "CHAP" if (item.auth|d(False)) else omit }}'
+    node_user: '{{ item.auth_username if (item.auth|d(False)) else omit }}'
+    node_pass: '{{ item.auth_password if (item.auth|d(False)) else omit }}'
+    auto_node_startup: '{{ False if (not item.auto|d(True)) else True }}'
+  with_items: iscsi_targets
+  register: iscsi_register_targets
+  when: iscsi_targets|d()
+  no_log: True
+
+- name: Make sure that local facts directory exists
+  file:
+    dest:  '/etc/ansible/facts.d'
+    state: 'directory'
+    owner: 'root'
+    group: 'root'
+    mode:  '0755'
+
+- name: Save iSCSI facts
+  template:
+    src:   'etc/ansible/facts.d/iscsi.fact.j2'
+    dest:  '/etc/ansible/facts.d/iscsi.fact'
+    owner: 'root'
+    group: 'root'
+    mode:  '0644'
+
+- name: Mount iSCSI paths
+  mount: name={{item.mount_point}} src={{item.dev}} fstype={{item.fstype}} opts=_netdev dump=0 passno=0 state=mounted
+  with_items: iscsi_mounts
